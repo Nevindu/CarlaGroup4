@@ -174,7 +174,7 @@ class Controller2D(object):
             """
                 Implement a lateral controller here. Remember that you can
                 access the persistent variables declared above here. For
-                example, can treat self.vars.v_previous like a "global variable ".
+                example, can treat self.vars.v_previous like a "global variable".
             """
             
             # Change the steer output with the lateral controller. 
