@@ -197,20 +197,20 @@ class Controller2D(object):
             crosstrack_error = np.min(np.sum ((pos - waypoints[:, :2])**2, axis=1))
             yaw_cross_track = np.arctan2(y - waypoints[0][1], x - waypoints[0][0]) # crosstrack_error should have the same sign as this
 
-            yaw_modify = yaw_waypoints - yaw_cross_track
-            if yaw_modify > np.pi:
-                yaw_modify -= 2 *np.pi
-            if yaw_modify < -np.pi :
-                yaw_modify += 2* np.pi
+            yaw_new = yaw_waypoints - yaw_cross_track
+            if yaw_new > np.pi:
+                yaw_new -= 2 *np.pi
+            if yaw_new < -np.pi :
+                yaw_new += 2* np.pi
 
-            crosstrack_error = abs(crosstrack_error) if yaw_modify > 0 else -abs(crosstrack_error)
+            crosstrack_error = abs(crosstrack_error) if yaw_new > 0 else -abs(crosstrack_error)
 
             crosstrack_steering = np.arctan(ke * crosstrack_error / (ks + v))
 
 
-            sigma = psi + crosstrack_steering
+            delta = psi + crosstrack_steering
             # Change the steer output with the lateral controller. 
-            steer_output = sigma - 2*np.pi if sigma > np.pi else  sigma + 2*np.pi
+            steer_output = delta - 2*np.pi if delta > np.pi else  delta + 2*np.pi
 
             
             # Change the steer output with the lateral controller. 
