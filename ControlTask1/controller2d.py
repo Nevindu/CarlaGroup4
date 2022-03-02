@@ -176,9 +176,44 @@ class Controller2D(object):
                 access the persistent variables declared above here. For
                 example, can treat self.vars.v_previous like a "global variable".
             """
+            ke = 0.3
+            ks = 10
+            waypoints = np.array(waypoints)
+            pos = np.array([x, y])
+
+
+            # calculate heading error
+            dx = waypoints[-1][0] - waypoints[0][0]
+            dy = waypoints[-1][1] - waypoints[0][1]
+            yaw_waypoints = np.arctan2 (dy, dx)
+
+            psi = yaw_waypoints - yaw # heading error
+            psi = psi - 2*np.pi if psi > np.pi else psi + 2*np.pi
+
+            # add the current x and y in an array
+            # slicing nD array in numpy --> array[:, :2] --> from all 1D arrays slice index 0 to index 2 i.e x and y
+            # np.sum(array, axis)--> specify the axis to sum along, (axis = 0, columns), (axis  = 1, rows) otherwise it will work on all the axes
+            # np.sum() --> it will return an array cotaining the sum of elements, we want to get the minimum values of those elements
+            crosstrack_error = np.min(np.sum ((pos - waypoints[:, :2])**2, axis=1))
+            yaw_cross_track = np.arctan2(y - waypoints[0][1], x - waypoints[0][0]) # crosstrack_error should have the same sign as this
+
+            yaw_modify = yaw_waypoints - yaw_cross_track
+            if yaw_modify > np.pi:
+                yaw_modify -= 2 *np.pi
+            if yaw_modify < -np.pi :
+                yaw_modify += 2* np.pi
+
+            crosstrack_error = abs(crosstrack_error) if yaw_modify > 0 else -abs(crosstrack_error)
+
+            crosstrack_steering = np.arctan(ke * crosstrack_error / (ks + v))
+
+
+            sigma = psi + crosstrack_steering
+            # Change the steer output with the lateral controller. 
+            steer_output = sigma - 2*np.pi if sigma > np.pi else  sigma + 2*np.pi
+
             
             # Change the steer output with the lateral controller. 
-            steer_output    = 0
 
             ######################################################
             # SET CONTROLS OUTPUT
