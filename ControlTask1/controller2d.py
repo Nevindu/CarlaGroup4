@@ -182,20 +182,15 @@ class Controller2D(object):
             pos = np.array([x, y])
 
 
-            # calculate heading error
             dx = waypoints[-1][0] - waypoints[0][0]
             dy = waypoints[-1][1] - waypoints[0][1]
             yaw_waypoints = np.arctan2 (dy, dx)
 
-            psi = yaw_waypoints - yaw # heading error
+            psi = yaw_waypoints - yaw 
             psi = psi - 2*np.pi if psi > np.pi else psi + 2*np.pi
 
-            # add the current x and y in an array
-            # slicing nD array in numpy --> array[:, :2] --> from all 1D arrays slice index 0 to index 2 i.e x and y
-            # np.sum(array, axis)--> specify the axis to sum along, (axis = 0, columns), (axis  = 1, rows) otherwise it will work on all the axes
-            # np.sum() --> it will return an array cotaining the sum of elements, we want to get the minimum values of those elements
             crosstrack_error = np.min(np.sum ((pos - waypoints[:, :2])**2, axis=1))
-            yaw_cross_track = np.arctan2(y - waypoints[0][1], x - waypoints[0][0]) # crosstrack_error should have the same sign as this
+            yaw_cross_track = np.arctan2(y - waypoints[0][1], x - waypoints[0][0]) 
 
             yaw_new = yaw_waypoints - yaw_cross_track
             if yaw_new > np.pi:
@@ -208,12 +203,9 @@ class Controller2D(object):
             crosstrack_steering = np.arctan(ke * crosstrack_error / (ks + v))
 
 
-            delta = psi + crosstrack_steering
-            # Change the steer output with the lateral controller. 
+            delta = psi + crosstrack_steering 
             steer_output = delta - 2*np.pi if delta > np.pi else  delta + 2*np.pi
 
-            
-            # Change the steer output with the lateral controller. 
 
             ######################################################
             # SET CONTROLS OUTPUT
